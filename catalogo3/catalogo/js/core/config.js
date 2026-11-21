@@ -2,10 +2,10 @@
 import { normalizarImagen } from '../../semana2/03-fetch-lazyloading-dropbox/dropbox.js';
 import { limpiarTexto as L } from '../../semana2/05-seguridad-xss-subida-imagen/seguridad-xss.js';
 
-export const WHATSAPP = '5916072154';
+export const WHATSAPP = '59162072154';
 export const ADMIN_USER = 'admin';
 export const ADMIN_PASS = 'elitesportalexydania';          // solo modo local (sin Supabase)
-export const ADMIN_EMAIL_DOMINIO = 'admin@elitesport.com';
+export const ADMIN_EMAIL_DOMINIO = '@elitesport.com';
 
 /* ---------- Supabase ----------
    Opción A: pega aquí tu URL y tu anon key (Project Settings → API).

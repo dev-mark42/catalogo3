@@ -118,7 +118,38 @@ insert into public.carrusel (orden,img,badge,titulo,texto) values
  (1,'https://images.unsplash.com/photo-1518609878373-06d740f60d8b?q=80&w=1600&auto=format&fit=crop','OFERTA','Hasta 30% Off','Solo por tiempo limitado en camisetas seleccionadas.'),
  (2,'','ENVÍOS','Llegamos a todo Bolivia','Compra por WhatsApp y recibe en tu puerta.');
 
--- 5) Crear el administrador ---------------------------------------------------------
+-- 5) Permisos SQL de PostgreSQL para Supabase/PostgREST -----------------------------
+-- RLS decide QUÉ filas puede ver/modificar cada usuario; GRANT permite acceder
+-- a las tablas. Sin estos GRANT, Supabase devuelve:
+-- "permission denied for table productos" incluso si las políticas RLS existen.
+
+grant usage on schema public to anon, authenticated;
+
+-- El catálogo es público: invitados y usuarios autenticados pueden leerlo.
+grant select on table public.ligas, public.productos, public.carrusel
+  to anon, authenticated;
+
+-- Solo usuarios autenticados pueden intentar escribir. Las políticas RLS
+-- anteriores restringen estas operaciones al administrador.
+grant insert, update, delete on table public.ligas, public.productos, public.carrusel
+  to authenticated;
+
+-- Perfiles: las políticas RLS limitan cada usuario a su propio perfil
+-- y permiten al administrador gestionar los demás.
+grant select, insert, update, delete on table public.perfiles
+  to authenticated;
+
+-- Favoritos: únicamente usuarios autenticados, con RLS por usuario_id.
+grant select, insert, update, delete on table public.favoritos
+  to authenticated;
+
+-- Necesario para insertar filas en tablas que utilicen secuencias/IDENTITY.
+grant usage, select on all sequences in schema public to authenticated;
+
+-- Recargar el esquema expuesto por la API REST de Supabase.
+notify pgrst, 'reload schema';
+
+-- 6) Crear el administrador ---------------------------------------------------------
 -- a) Authentication → Users → Add user: admin@elitesport.com + una contraseña (marca "Auto confirm user")
 -- b) Luego ejecuta:
 --    update public.perfiles set rol = 'admin' where email = 'admin@elitesport.com';
